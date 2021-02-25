@@ -1,5 +1,6 @@
 class Node():
 	def __init__(self, _label):
+		self.checked = False
 		self.label = _label
 	def __str__(self):
 		return "Node({})".format(self.label)
