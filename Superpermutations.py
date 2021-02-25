@@ -14,5 +14,5 @@ permutations = list(permutFunction(pool))
 graph = []
 for perm in permutations:
 	graph.append(nl.Node(perm))
-
+print("{} -> {} = {}".format(graph[0], graph[1], graph[0].distance(graph[1])))
 # TODO: A* algorithm in the graph
