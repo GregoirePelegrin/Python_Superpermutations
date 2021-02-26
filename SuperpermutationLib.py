@@ -1,7 +1,7 @@
 class Node():
 	def __init__(self, _label):
 		self.checked = False
-		self.label = _label
+		self.label = str(_label)
 	def __str__(self):
 		return "Node({})".format(self.label)
 	def distance(self, nodeB):
@@ -20,11 +20,11 @@ class Superpermutation():
 		return "Superpermutation({}: {})".format(self.weight, self.label)
 	def include(self, node):
 		node.check = True
-		if self.label[len(self.label)-n:] == node.label:
+		if self.label[len(self.label)-len(node.label):] == node.label:
 			return self
-		for i in range(1, n+1):
-			if self.label[len(self.label)-(n-i):] == node.label[:-i]:
-				self.label += node.label[(n-i):]
+		for i in range(1, len(node.label)+1):
+			if self.label[len(self.label)-(len(node.label)-i):] == node.label[:-i]:
+				self.label += node.label[(len(node.label)-i):]
 				self.weight += i
 				break
 		return self
