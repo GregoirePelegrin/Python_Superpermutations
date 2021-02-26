@@ -3,6 +3,22 @@ from matplotlib import pyplot as plt
 
 import SuperpermutationLib as sl
 
+def display(superps):
+	lengths = []
+	population = []
+	for s in superps:
+		if s.weight not in lengths:
+			lengths.append(s.weight)
+			population.append(1)
+		else:
+			population[lengths.index(s.weight)] += 1
+	plt.bar(lengths, population, label="Total: {}".format(len(superps)))
+	plt.title("Superpermutation order {}".format(ORDER))
+	plt.xlabel("Length")
+	plt.ylabel("Occurrences number")
+	plt.legend()
+	plt.show()
+
 def permutations2(iterable, r=None):
     pool = iterable
     n = len(pool)
@@ -27,11 +43,13 @@ def permutations2(iterable, r=None):
             return
 
 ORDER = int(input("Number of elts (2-3 for now): "))
+
 # Generate the pool of elts from the number of elt
 pool = []
 for i in range(ORDER):
 	pool.append(chr(65+i))
 permutations = list(permutFunction(pool))
+
 # Generate the graph from the permutations
 graph = []
 for perm in permutations:
@@ -39,6 +57,7 @@ for perm in permutations:
 	for elt in perm:
 		temp += elt
 	graph.append(sl.Node(temp))
+
 # Generate the list of all the superpermutations from the graph => to modify with A*
 superpermutations = list(permutations2(graph))
 superp = sl.Superpermutation()
@@ -52,27 +71,13 @@ for i in range(len(superpermutations)):
 		temp.include(n)
 	superpermutations[i] = temp
 
-mini = ORDER**ORDER
-miniSuperp = None
-for s in superpermutations:
-	if s.weight < mini:
-		mini = s.weight
-		miniSuperp = s
+print(len(superpermutations))
 
-def display(superps):
-	lengths = []
-	population = []
-	for s in superps:
-		if s.weight not in lengths:
-			lengths.append(s.weight)
-			population.append(1)
-		else:
-			population[lengths.index(s.weight)] += 1
-	plt.bar(lengths, population, label="Total: {}".format(len(superps)))
-	plt.title("Superpermutation order {}".format(ORDER))
-	plt.xlabel("Length")
-	plt.ylabel("Occurrences number")
-	plt.legend()
-	plt.show()
+# mini = ORDER**ORDER
+# miniSuperp = None
+# for s in superpermutations:
+# 	if s.weight < mini:
+# 		mini = s.weight
+# 		miniSuperp = s
 
-display(superpermutations)
+# display(superpermutations)
