@@ -4,7 +4,21 @@ from matplotlib import pyplot as plt
 
 import LibSuperpermutation as sl
 
-def findNearest(node, nodes):
+def generateGraph(eltss):
+	tempGraph = []
+	for elts in eltss:
+		temp = ""
+		for elt in elts:
+			temp += elt
+		tempGraph.append(sl.Node(temp))
+	return tempGraph
+def generatePool(nbrElts):
+	temp = []
+	for i in range(nbrElts):
+		temp.append(chr(65+i))
+	return temp
+# Functions relative to the Nearest Neighbour algorithm
+def NearestNeighbour_findNearest(node, nodes):
 	minDist = node.distance(nodes[0])
 	minIndex = 0
 	minNode = nodes[0]
@@ -15,41 +29,24 @@ def findNearest(node, nodes):
 			minIndex = i
 			minNode = n
 	return minNode, minIndex
-
-def generateGraph(eltss):
-	tempGraph = []
-	for elts in eltss:
-		temp = ""
-		for elt in elts:
-			temp += elt
-		tempGraph.append(sl.Node(temp))
-	return tempGraph
-
-def generatePool(nbrElts):
-	temp = []
-	for i in range(nbrElts):
-		temp.append(chr(65+i))
-	return temp
-
-def getBestNearestNeighbour(nodes):
+def NearestNeighbour_getBestNearestNeighbour(nodes):
 	temp = sl.Superpermutation()
 	for n in graph:
 		temp.include(n)
 	minSuperp = temp
 	with alive_bar(len(nodes)) as bar:
 		for starter in nodes:
-			temp = getCurrentNearestNeighbour(nodes, starter, minSuperp)
+			temp = NearestNeighbour_getCurrentNearestNeighbour(nodes, starter, minSuperp)
 			if minSuperp.length > temp.length:
 				minSuperp = temp
 			bar()
 	return minSuperp
-
-def getCurrentNearestNeighbour(nodes, starter, minSuperp):
+def NearestNeighbour_getCurrentNearestNeighbour(nodes, starter, minSuperp):
 	nodesList = nodes[:]
 	temp = sl.Superpermutation().include(starter)
 	currentNode = starter
 	while temp.length < minSuperp.length and len(nodesList) != 0:
-		nextNode, nextIndex = findNearest(currentNode, nodesList)
+		nextNode, nextIndex = NearestNeighbour_findNearest(currentNode, nodesList)
 		temp.include(nextNode)
 		del nodesList[nextIndex]
 	return temp
@@ -64,7 +61,7 @@ for ORDER in range(1, 7):
 	graph = generateGraph(permutationList)
 
 	# Implementing Nearest-Neighbour on the graph
-	superpermutation = getBestNearestNeighbour(graph)
+	superpermutation = NearestNeighbour_getBestNearestNeighbour(graph)
 	minLengths.append(superpermutation.length)
 
 x = [i for i in range(1, 7)]
