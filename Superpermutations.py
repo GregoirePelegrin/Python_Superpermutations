@@ -1,83 +1,75 @@
-from itertools import permutations as permutFunction
+from alive_progress import alive_bar
+from itertools import permutations
 from matplotlib import pyplot as plt
 
-import SuperpermutationLib as sl
+import LibSuperpermutation as sl
 
-def display(superps):
-	lengths = []
-	population = []
-	for s in superps:
-		if s.weight not in lengths:
-			lengths.append(s.weight)
-			population.append(1)
-		else:
-			population[lengths.index(s.weight)] += 1
-	plt.bar(lengths, population, label="Total: {}".format(len(superps)))
-	plt.title("Superpermutation order {}".format(ORDER))
-	plt.xlabel("Length")
-	plt.ylabel("Occurrences number")
-	plt.legend()
-	plt.show()
+def findNearest(node, nodes):
+	minDist = node.distance(nodes[0])
+	minIndex = 0
+	minNode = nodes[0]
+	for i,n in enumerate(nodes):
+		d = node.distance(n)
+		if minDist > d:
+			minDist = d
+			minIndex = i
+			minNode = n
+	return minNode, minIndex
 
-def permutations2(iterable, r=None):
-    pool = iterable
-    n = len(pool)
-    r = n if r is None else r
-    if r > n:
-        return
-    indices = list(range(n))
-    cycles = list(range(n, n-r, -1))
-    yield tuple(pool[i] for i in indices[:r])
-    while n:
-        for i in reversed(range(r)):
-            cycles[i] -= 1
-            if cycles[i] == 0:
-                indices[i:] = indices[i+1:] + indices[i:i+1]
-                cycles[i] = n - i
-            else:
-                j = cycles[i]
-                indices[i], indices[-j] = indices[-j], indices[i]
-                yield tuple(pool[i] for i in indices[:r])
-                break
-        else:
-            return
+def generateGraph(eltss):
+	tempGraph = []
+	for elts in eltss:
+		temp = ""
+		for elt in elts:
+			temp += elt
+		tempGraph.append(sl.Node(temp))
+	return tempGraph
 
-ORDER = int(input("Number of elts (2-3 for now): "))
+def generatePool(nbrElts):
+	temp = []
+	for i in range(nbrElts):
+		temp.append(chr(65+i))
+	return temp
 
-# Generate the pool of elts from the number of elt
-pool = []
-for i in range(ORDER):
-	pool.append(chr(65+i))
-permutations = list(permutFunction(pool))
-
-# Generate the graph from the permutations
-graph = []
-for perm in permutations:
-	temp = ""
-	for elt in perm:
-		temp += elt
-	graph.append(sl.Node(temp))
-
-# Generate the list of all the superpermutations from the graph => to modify with A*
-superpermutations = list(permutations2(graph))
-superp = sl.Superpermutation()
-for s in superpermutations:
-	for n in s:
-		superp.include(n)
-
-for i in range(len(superpermutations)):
+def getBestNearestNeighbour(nodes):
 	temp = sl.Superpermutation()
-	for n in superpermutations[i]:
+	for n in graph:
 		temp.include(n)
-	superpermutations[i] = temp
+	minSuperp = temp
+	with alive_bar(len(nodes)) as bar:
+		for starter in nodes:
+			temp = getCurrentNearestNeighbour(nodes, starter, minSuperp)
+			if minSuperp.length > temp.length:
+				minSuperp = temp
+			bar()
+	return minSuperp
 
-print(len(superpermutations))
+def getCurrentNearestNeighbour(nodes, starter, minSuperp):
+	nodesList = nodes[:]
+	temp = sl.Superpermutation().include(starter)
+	currentNode = starter
+	while temp.length < minSuperp.length and len(nodesList) != 0:
+		nextNode, nextIndex = findNearest(currentNode, nodesList)
+		temp.include(nextNode)
+		del nodesList[nextIndex]
+	return temp
 
-# mini = ORDER**ORDER
-# miniSuperp = None
-# for s in superpermutations:
-# 	if s.weight < mini:
-# 		mini = s.weight
-# 		miniSuperp = s
+# ORDER = int(input("Number of elts: "))
 
-# display(superpermutations)
+minLengths = []
+for ORDER in range(1, 7):
+	# Generate the pool of elts from the number of elt
+	pool = generatePool(ORDER)
+	permutationList = list(permutations(pool))
+	graph = generateGraph(permutationList)
+
+	# Implementing Nearest-Neighbour on the graph
+	superpermutation = getBestNearestNeighbour(graph)
+	minLengths.append(superpermutation.length)
+
+x = [i for i in range(1, 7)]
+yTheo = [1, 3, 9, 33, 153, 872]
+plt.plot(x, yTheo, label="Theoretical lengths")
+plt.plot(x, minLengths, label="Nearest-Neighbour")
+plt.legend()
+plt.show()

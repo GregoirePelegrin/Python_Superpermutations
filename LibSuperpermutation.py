@@ -15,9 +15,9 @@ class Node():
 class Superpermutation():
 	def __init__(self, _label=""):
 		self.label = _label
-		self.weight = len(self.label)
+		self.length = len(self.label)
 	def __str__(self):
-		return "Superpermutation({}: {})".format(self.weight, self.label)
+		return "Superpermutation({}: {})".format(self.length, self.label)
 	def include(self, node):
 		node.check = True
 		if self.label[len(self.label)-len(node.label):] == node.label:
@@ -25,6 +25,6 @@ class Superpermutation():
 		for i in range(1, len(node.label)+1):
 			if self.label[len(self.label)-(len(node.label)-i):] == node.label[:-i]:
 				self.label += node.label[(len(node.label)-i):]
-				self.weight += i
+				self.length += i
 				break
 		return self
