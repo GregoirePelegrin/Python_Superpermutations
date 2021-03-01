@@ -53,7 +53,7 @@ def NearestNeighbour_getCurrentNearestNeighbour(nodes, starter, minSuperp):
 
 # ORDER = int(input("Number of elts: "))
 
-minLengths = []
+minLengths = {}
 for ORDER in range(1, 7):
 	# Generate the pool of elts from the number of elt
 	pool = generatePool(ORDER)
@@ -62,11 +62,14 @@ for ORDER in range(1, 7):
 
 	# Implementing Nearest-Neighbour on the graph
 	superpermutation = NearestNeighbour_getBestNearestNeighbour(graph)
-	minLengths.append(superpermutation.length)
+	if "NearestNeighbour" not in minLengths:
+		minLengths["NearestNeighbour"] = []
+	minLengths["NearestNeighbour"].append(superpermutation.length)
 
 x = [i for i in range(1, 7)]
 yTheo = [1, 3, 9, 33, 153, 872]
 plt.plot(x, yTheo, label="Theoretical lengths")
-plt.plot(x, minLengths, label="Nearest-Neighbour")
+for key in minLengths:
+	plt.plot(x, minLengths[key], label=key)
 plt.legend()
 plt.show()
