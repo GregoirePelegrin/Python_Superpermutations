@@ -119,8 +119,8 @@ def comparison(maxOrder=5):
 		minLengths["NearestInsertion"].append(superpermutation.length)
 	return minLengths
 
-n = int(input("To what order? (1-7): "))
-x = [i for i in range(1, n)]
+n = int(input("To what order? (1-5): "))
+x = [i for i in range(1, n+1)]
 yTheo = [1, 3, 9, 33, 153, 872, 5913, 46233, 409113, 4037913][:len(x)]
 plt.plot(x, yTheo, label="Theoretical lengths")
 minLengths = comparison(len(x))
