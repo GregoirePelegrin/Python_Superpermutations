@@ -99,8 +99,7 @@ def NearestNeighbour_getCurrentNearestNeighbour(nodes, starter, minSuperp):
 
 def comparison(maxOrder=5):
 	minLengths = {}
-	#for ORDER in range(1, 7):
-	for ORDER in range(1, 5):
+	for ORDER in range(1, maxOrder+1):
 		print("ORDER = {}".format(ORDER))
 		# Generate the pool of elts from the number of elt
 		pool = generatePool(ORDER)
@@ -120,7 +119,8 @@ def comparison(maxOrder=5):
 		minLengths["NearestInsertion"].append(superpermutation.length)
 	return minLengths
 
-x = [i for i in range(1, 6)]
+n = int(input("To what order? (1-7): "))
+x = [i for i in range(1, n)]
 yTheo = [1, 3, 9, 33, 153, 872, 5913, 46233, 409113, 4037913][:len(x)]
 plt.plot(x, yTheo, label="Theoretical lengths")
 minLengths = comparison(len(x))
